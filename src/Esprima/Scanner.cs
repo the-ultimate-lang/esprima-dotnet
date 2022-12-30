@@ -1768,7 +1768,7 @@ public sealed partial class Scanner
         });
 
         // First, detect invalid regular expressions.
-        var options = ParseRegexOptions(flags);
+        var options = ParseRegexOptions(flags, out var regexFlags);
 
         try
         {
@@ -1776,7 +1776,7 @@ public sealed partial class Scanner
         }
         catch
         {
-            tmp = EscapeFailingRegex(tmp);
+            tmp = EscapeFailingRegex(tmp, regexFlags);
 
             try
             {
@@ -2352,7 +2352,7 @@ public sealed partial class Scanner
         return inverted.ToArray();
     }
 
-    internal string EscapeFailingRegex(string pattern)
+    internal string EscapeFailingRegex(string pattern, RegexFlags regexFlags)
     {
         // .NET 4.x doesn't support [^] which should match any character including newline
         // c.f. https://github.com/sebastienros/esprima-dotnet/issues/146
@@ -2361,11 +2361,10 @@ public sealed partial class Scanner
             pattern = pattern.Replace("[^]", @"[\s\S]");
         }
 
-        if (pattern.Contains("--"))
+        if ((regexFlags & RegexFlags.UnicodeSets) != 0 && pattern.Contains("--"))
         {
             pattern = pattern.Replace("--[", "-[");
-            var r = new Regex("--([^\\[\\]]*)");
-            pattern = r.Replace(pattern, "-[$1]"); //it should only be replaced when inside of a "[", but for this we need a regex parser.
+            pattern = Regex.Replace(pattern, "--([^\\[\\]]*)", "-[$1]"); //it should only be replaced when inside of a "[", but for this we need a regex parser.
         }
 
         if (pattern.Contains("?<$"))
@@ -2567,7 +2566,7 @@ public sealed partial class Scanner
     }
 
     [Flags]
-    private enum RegexFlags
+    internal enum RegexFlags
     {
         None = 0,
         Global = 1,
@@ -2582,7 +2581,12 @@ public sealed partial class Scanner
 
     public RegexOptions ParseRegexOptions(string input)
     {
-        var flags = RegexFlags.None;
+        return ParseRegexOptions(input, out _);
+    }
+
+    private RegexOptions ParseRegexOptions(string input, out RegexFlags flags)
+    {
+        flags = RegexFlags.None;
         foreach (var c in input)
         {
             var flag = c switch
