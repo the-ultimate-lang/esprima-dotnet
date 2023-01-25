@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Standard-compliant ECMAScript 2019 parser (also known as JavaScript).</Description>
-    <AssemblyName>Esprima</AssemblyName>
+    <AssemblyName>Ultimate.Language.Esprima</AssemblyName>
     <AssemblyTitle>Esprima .NET</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
     <BuildNumber Condition="'$(BuildNumber)' == ''">0</BuildNumber>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyOriginatorKeyFile>../Esprima.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <PackageId>Esprima</PackageId>
+    <PackageId>Ultimate.Language.Esprima</PackageId>
     <PackageTags>javascript, parser, ecmascript</PackageTags>
     <PackageProjectUrl>https://github.com/sebastienros/esprima-dotnet</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
-    <Version>3.0.0-beta-$(BuildNumber)</Version>
+    <Version>2023.0125.2257.31</Version>
 
     <!-- to get switch over span -->
     <LangVersion>preview</LangVersion>
